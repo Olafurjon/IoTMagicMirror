@@ -1,0 +1,20 @@
+﻿<Page
+    x:Class="App1.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:App1"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="Black">
+        <TextBlock x:Name="tbl_timenow" HorizontalAlignment="Left" Margin="36,48,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" SelectionChanged="tbl_timenow_SelectionChanged" Foreground="#FFFF0808"/>
+        <StackPanel HorizontalAlignment="Center" Height="600" VerticalAlignment="Top" Width="800" Margin="503,209,617,0">
+            <TextBlock x:Name="textBlock" TextWrapping="Wrap" Text="Myndavélin" RenderTransformOrigin="1.37,0.633" Foreground="#FFFF0808" Margin="0" SelectionChanged="textBlock_SelectionChanged" Height="25" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Canvas Height="600"  Background="White" Margin="0,8,0,0" Width="800" Canvas.ZIndex="-1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <CaptureElement Height="100" Width="100" Canvas.Left="153" Canvas.Top="145"/>
+                <CaptureElement x:Name="CameraPreview" Height="600" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Canvas>
+        </StackPanel>
+    </Grid>
+</Page>
