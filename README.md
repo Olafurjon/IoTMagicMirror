@@ -16,3 +16,6 @@ Meira research og skoðað hvernig skyldi sameina, búinn að búa til nokkur co
 Eitt sem gæti verið mögulegur skellur er það að fría útgáfan leyfir aðeins 20 uppflettingum á mín, ég lenti í því þegar ég var að láta það læra betur ákveðin andlit þá hætti forritið vegna "Limit Reached" þannig  mikilvægt er að hafa í huga þegar kemur að implememnta þessu er að kalla ekki oftar í functionið sem mun kanna hver er tilstaðar oftar en 1x á mín, og mögulega hugsa þetta þannig að appið þurfi ekki að kalla nema 1x til að staðfesta án þess að láta loopa í öll face-ID en ég skoða það nánar síðar.
 
 Frítíminn sem gefst í dag til að skoða þetta fer í að kynnast bara ferlinu og gera nokkur minni console öpp og samtvinna svo þekkinguna sem öðlast þar til að skila inn réttum upplýsingum í UWP appinu.
+
+# 09.11.2017 - Status
+Vesen... fastur núna með sömu milluna og eftir svona 30 mismunandi útfærslur lagast það ekki... hann kvartar að ég sé að reyna gera eitthvað sem ætti að vega á bakgrunssþræði á UI þræðinum en svo virðist sem UWP threading hafi ekki sama og t.d. WPF eða console  þar sem að ég gæti bara úthlutað þessu á nýjan þráð, hinsvegar er eitthvað sem heitir Task sem á að gera eitthvað við Thread poolið en eftir mikið af mismunandi tilraunum þá gengur það ekki...
