@@ -21,3 +21,6 @@ Frítíminn sem gefst í dag til að skoða þetta fer í að kynnast bara ferli
 Vesen... fastur núna með sömu milluna og eftir svona 30 mismunandi útfærslur lagast það ekki... hann kvartar að ég sé að reyna gera eitthvað sem ætti að vega á bakgrunssþræði á UI þræðinum en svo virðist sem UWP threading hafi ekki sama og t.d. WPF eða console  þar sem að ég gæti bara úthlutað þessu á nýjan þráð, hinsvegar er eitthvað sem heitir Task sem á að gera eitthvað við Thread poolið en eftir mikið af mismunandi tilraunum þá gengur það ekki...
 
 Seinna update: Vandræðaleg þetta var bara einhver smá villa sem stal þarna þessum tíma af mér... núna þekkir hún mig og getur stofnað nýja en þarf að laga hvernig hún vistar þá og trainar sig til þekkingu.
+
+# 10.11.2017 - Status
+Jæja hann lærir núna ný andlit og þekkir þau síðan aftur, vegna þess að ég hef bara heimild fyrir 20 calls á mín þá get ég ekki látið myndavélina kanna andlitið t.d. á 2 sek fresti  því þá jafnvel þótt ég minnki þetta í að hann geri allt í einu calli þá samt eftir 40 sek væri það completað svo eins og er þetta að refresha andlitið á mínotu fresti þangað til ég læt vega geyma bara face ID locally  og reyna switcha þannig á milli.
