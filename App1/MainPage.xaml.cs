@@ -52,8 +52,10 @@ namespace App1
             timetest();
             viewCamera();
             takePhoto();
-            Task t = Task.Run(()=> { GroupTest(); });
+          Task t = Task.Run(()=> { GroupTest(); });
             WhoIsTimer();
+
+           CheckFaceTimer();
 
         }
         
@@ -68,6 +70,8 @@ namespace App1
             disptime.Start();
 
         }
+
+
 
         private void disptime_Tick(object sender, object e)
         {
@@ -92,7 +96,35 @@ namespace App1
             {
                 tbl_status.Text = activeId.ToString();
             }
+
         }
+
+        public void CheckFaceTimer()
+        {
+            DispatcherTimer disptime;
+            disptime = new DispatcherTimer();
+
+            disptime.Interval = new TimeSpan(0, 1, 0);
+            disptime.Tick += disptime_CheckFace;
+
+            disptime.Start();
+
+        }
+
+        private void disptime_CheckFace(object sender, object e)
+        {
+            /* if(activeId != null && activeId != CheckFace().ToString())
+             {
+
+             }
+             if (activeId != null )
+             {
+                 tbl_status.Text = activeId.ToString();
+             }*/
+            Task t = Task.Run(() => { CheckFace(); });
+        }
+
+
 
 
 
@@ -109,7 +141,10 @@ namespace App1
         {
             var photodir = await KnownFolders.PicturesLibrary.GetFileAsync(PHOTO_FILE_NAME);
             string photo =  photodir.Path;
-            
+
+            string picdir = photo.Substring(0, photo.Length - 9);
+
+
             try
             {
                 await faceServiceClient.CreatePersonGroupAsync(personGroupId, "FaceGroup");
@@ -155,32 +190,26 @@ namespace App1
                             // Id of the person group that the person belonged to
                             personGroupId,
                             // Name of the person
-                            "Harpalind"
+                            "unknown"
                         );
 
-                        for (int z = 0; z < 15; z++)
+                        for (int z = 0; z < 6; z++)
                         {
                             Random r = new Random();
                             photostorage = await KnownFolders.PicturesLibrary.CreateFileAsync((z+PHOTO_FILE_NAME), CreationCollisionOption.ReplaceExisting);
                             ImageEncodingProperties imageProperties = ImageEncodingProperties.CreateJpeg();
                             await mediaCapture.CapturePhotoToStorageFileAsync(imageProperties, photostorage);
+                            var friend1ImageDir = await KnownFolders.PicturesLibrary.GetFileAsync(z+PHOTO_FILE_NAME);
+                            string imagePath = friend1ImageDir.Path;
+
+                            using (Stream k = File.OpenRead(imagePath))
+                            {
+                                await faceServiceClient.AddPersonFaceAsync(
+                                    personGroupId, friend1.PersonId, k);
+                            }
+
                         }
                            
-
-
-                            var i = 0;
-
-                            string friend1ImageDir = KnownFolders.PicturesLibrary.Path;
-
-                            foreach (string imagePath in Directory.GetFiles(friend1ImageDir, "*.jpg"))
-                            {
-                                i++;
-                                using (Stream k = File.OpenRead(imagePath))
-                                {
-                                    await faceServiceClient.AddPersonFaceAsync(
-                                        personGroupId, friend1.PersonId, k);
-                                }
-                            }
 
                         await faceServiceClient.TrainPersonGroupAsync(personGroupId);
 
@@ -196,7 +225,9 @@ namespace App1
 
                             await Task.Delay(1000);
                         }
-                        activeId = friend1.PersonId.ToString();
+                        var candidateId = identifyResult.Candidates[0].PersonId;
+                        var person = await faceServiceClient.GetPersonAsync(personGroupId, candidateId);
+                        activeId = person.Name;
 
                     }
                         else
@@ -205,24 +236,14 @@ namespace App1
                             var candidateId = identifyResult.Candidates[0].PersonId;
                             var person = await faceServiceClient.GetPersonAsync(personGroupId, candidateId);
                         //tbl_status.Text = ("Identified as " + person.Name);
+                        //activeId = person.Name.ToString();
+ 
                         activeId = person.Name.ToString();
 
-                        }
+
+                    }
                     }
                 }
-            
-
-                
-
-
-
-      
-
-
-
-
-            
- 
 
         }
 
@@ -253,6 +274,43 @@ namespace App1
         }
 
 
+        private async void CheckFace()
+        {
+            takePhoto();
+            var photodir = await KnownFolders.PicturesLibrary.GetFileAsync(PHOTO_FILE_NAME);
+            string photo = photodir.Path;
+
+            string testImageFile = photo;
+
+            using (Stream s = File.OpenRead(testImageFile))
+            {
+                var faces = await faceServiceClient.DetectAsync(s);
+                var faceIds = faces.Select(face => face.FaceId).ToArray();
+                var results = await faceServiceClient.IdentifyAsync(personGroupId, faceIds);
+
+
+                foreach (var identifyResult in results)
+                {
+                    //  tbl_status.Text = ("Result of face: " + identifyResult.FaceId);
+                    if (identifyResult.Candidates.Length == 0)
+                    {
+                        //NewUser
+                        activeId = "createnewUser";
+      
+                    }
+                    else
+                    {
+                        var candidateId = identifyResult.Candidates[0].PersonId;
+                        var person = await faceServiceClient.GetPersonAsync(personGroupId, candidateId);
+                        //tbl_status.Text = ("Identified as " + person.Name);
+                        //activeId = person.Name.ToString();
+
+                        activeId = person.Name.ToString();
+                   
+                    }
+                }
+            }
+        }
 
 
         private void tbl_timenow_SelectionChanged(object sender, RoutedEventArgs e)
