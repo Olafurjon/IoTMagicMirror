@@ -41,7 +41,9 @@ namespace App1
         private FaceServiceClient faceServiceClient = new FaceServiceClient(subscriptionKey.ToString(), "https://northeurope.api.cognitive.microsoft.com/face/v1.0/");
         private readonly string PHOTO_FILE_NAME = "photo.jpg";
         public string personGroupId = "facegroup";
-        float emo;
+        public KeyValuePair<string, float> maxemotion = new KeyValuePair<string, float>();
+
+     
 
 
 
@@ -192,14 +194,16 @@ namespace App1
             string testImageFile = photo;
 
 
-
+                
 
                 using (Stream s = File.OpenRead(testImageFile))
                 {
                     var faces = await faceServiceClient.DetectAsync(s, returnFaceLandmarks: true,
                         returnFaceAttributes: requiredFaceAttributes);
+
                     foreach (var faceinfo in faces)
                     {
+
                         var id = faceinfo.FaceId;
                         var attributes = faceinfo.FaceAttributes;
                         var age = attributes.Age;
@@ -210,9 +214,14 @@ namespace App1
                         var glasses = attributes.Glasses;
                         var emotion = attributes.Emotion;
                         //var emotionlist = emotion.ToRankedList();
-                       // emo = emotionlist.Max().Value;
+                        // emo = emotionlist.Max().Value;
+                       // emotionstring = emotion.Happiness.ToString();
+                       
+                         
                     }
+          
                     //emo.ToString();
+                    
                     var faceIds = faces.Select(face => face.FaceId).ToArray();
                     var results = await faceServiceClient.IdentifyAsync(personGroupId, faceIds);
 
@@ -311,10 +320,13 @@ namespace App1
             photostorage = await KnownFolders.PicturesLibrary.CreateFileAsync(PHOTO_FILE_NAME, CreationCollisionOption.ReplaceExisting);
 
             ImageEncodingProperties imageProperties = ImageEncodingProperties.CreateJpeg();
+            imageProperties.Height = 1200;
+            imageProperties.Width = 1800;
             await mediaCapture.CapturePhotoToStorageFileAsync(imageProperties, photostorage);
 
             using (Stream s = File.OpenRead(await GetPhoto()))
             {
+               
                 var faces = await faceServiceClient.DetectAsync(s);
                 face = faces;
 
@@ -359,10 +371,6 @@ namespace App1
                 FaceAttributeType.Glasses,
                 FaceAttributeType.Emotion
             };
-
-
-
-
 
 
                 using (Stream s = File.OpenRead(photo))
