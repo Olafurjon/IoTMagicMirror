@@ -26,3 +26,8 @@ Seinna update: Vandræðaleg þetta var bara einhver smá villa sem stal þarna 
 Jæja hann lærir núna ný andlit og þekkir þau síðan aftur, vegna þess að ég hef bara heimild fyrir 20 calls á mín þá get ég ekki látið myndavélina kanna andlitið t.d. á 2 sek fresti  því þá jafnvel þótt ég minnki þetta í að hann geri allt í einu calli þá samt eftir 40 sek væri það completað svo eins og er þetta að refresha andlitið á mínotu fresti þangað til ég læt vega geyma bara face ID locally  og reyna switcha þannig á milli. 
 
 Athyglisverð villa... ég nota alltaf sömu aðferðina til að taka mynd, tek snapshot frá myndavélinni set í möppu og ef að vélin þekkir þig ekki býr hún þig til og tekur nokkrar myndir af þér til að læra hver þú ert og vistar og allt í góðu og hún skilar síðan nafni... hinsvegar ef hún er einfaldlega bara að facechecka og ég nota sömu aðferð til að taka eina mynd þá kvartar hún að mynd sé of smá...... 
+
+# 12.11.2017 - Status
+Að þekkja svipbrigði og þess háttar er búið að bæta við en hvernig verður unnið úr því á ég eftir að skoða, eins og er ennþá vesen með að þrátt fyrir að framkvæma þetta á sama máta kemur kvörtun (stundum) að image size sé of smá, þrátt fyrir að þegar ég skoða þetta þá er stærð myndarinnar alltaf í kringum 50-70kb, tók að vísu eftir því að þegar eina ljósið sem ég fékk var ljósið frá skjánum duttu myndirnar í 30kb og þá gerðist þetta mun oftar... spurning hvort að betri myndavél sem tekur í kjölfarið betri myndir myndi útrýma þessu vandamáli, eða hafa bara alltaf mjög upplýst í kringum sig... 
+
+
