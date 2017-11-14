@@ -1,4 +1,4 @@
-# VEF3B3U---Verkefni-4-
+# IoT Magic Mirror-
 Windows Core IoT Töfraspegill
 
 # 07.11.2017 - Status
@@ -31,4 +31,7 @@ Athyglisverð villa... ég nota alltaf sömu aðferðina til að taka mynd, tek 
 Að þekkja svipbrigði og þess háttar er búið að bæta við en hvernig verður unnið úr því á ég eftir að skoða, eins og er ennþá vesen með að þrátt fyrir að framkvæma þetta á sama máta kemur kvörtun (stundum) að image size sé of smá, þrátt fyrir að þegar ég skoða þetta þá er stærð myndarinnar alltaf í kringum 50-70kb, tók að vísu eftir því að þegar eina ljósið sem ég fékk var ljósið frá skjánum duttu myndirnar í 30kb og þá gerðist þetta mun oftar... spurning hvort að betri myndavél sem tekur í kjölfarið betri myndir myndi útrýma þessu vandamáli, eða hafa bara alltaf mjög upplýst í kringum sig... 
 
 -.- prófaði að force-a myndirnar í stærri upplausn, virðist ekki hafa skemmt facedetectionið þrátt fyrir smá auka blur en... vandamál en tilstaðar, ég hef prófað að endurraða hvenær hún tekur mynda uppá ef hann er að lesa ókláraða mynd en svo virðist það ekki leysa vandamálið, þannig eins og er þekkir þetta fyrstu manneskjuna og switchar ekki yfir í aðra sem kemur í staðinn nema þú sért mjög heppinn... 
+
+# 14.11.2017 - Status
+Verkefnið uppfært í Lokaverkefni, nýtt git fyrir það, lítið gerðist í skólanum þar sem að vélin var 90 mín að gera sig ready með viðeigandi uppfærslum og stillingum og loks þegar þetta var keyrt afstað í skjánum þá er skjárinn takmarkuð við mjög láta upplausn sem skilar þessu ekki jafn flott og í 1920 x 1080 og einhverjar upplýsingar skila sér ekki á skjáinn þannig það þarf að endurhugsa aðeins hvernig því verður háttað.
 
