@@ -35,3 +35,4 @@ Að þekkja svipbrigði og þess háttar er búið að bæta við en hvernig ver
 # 14.11.2017 - Status
 Verkefnið uppfært í Lokaverkefni, nýtt git fyrir það, lítið gerðist í skólanum þar sem að vélin var 90 mín að gera sig ready með viðeigandi uppfærslum og stillingum og loks þegar þetta var keyrt afstað í skjánum þá er skjárinn takmarkuð við mjög láta upplausn sem skilar þessu ekki jafn flott og í 1920 x 1080 og einhverjar upplýsingar skila sér ekki á skjáinn þannig það þarf að endurhugsa aðeins hvernig því verður háttað.
 
+Að hlaða upp designerinn er að taka skuggalegan tíma þannig ég eflaust reyni bara að kíkja á þetta eftir vinnu í kvöld...
