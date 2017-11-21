@@ -36,12 +36,14 @@ namespace App1
     {
         const string subscriptionKey = "0cfd75d5d8054f768ddcd03fbc3bd376";
         string activeId;
+        string Infostring = null;
+        
         private MediaCapture mediaCapture;
         private StorageFile photostorage;
         private FaceServiceClient faceServiceClient = new FaceServiceClient(subscriptionKey.ToString(), "https://northeurope.api.cognitive.microsoft.com/face/v1.0/");
         private readonly string PHOTO_FILE_NAME = "photo.jpg";
         public string personGroupId = "facegroup";
-        public KeyValuePair<string, float> maxemotion = new KeyValuePair<string, float>();
+        //public KeyValuePair<string, float> maxemotion = new KeyValuePair<string, float>();
 
      
 
@@ -51,13 +53,16 @@ namespace App1
         {
             
             this.InitializeComponent();
-
+            
             timetest();
            viewCamera();
-           Task P = Task.Run(()=> { takePhoto(); }) ;
-          Task t = Task.Run(()=> { GroupTest(); });
+            Task P = Task.Run(() => { takePhoto(); });
+            Task t = Task.Run(()=> {
+              GroupTest(); 
+              //CheckFace();
+          });
             WhoIsTimer();
-
+            infoTimer();
            CheckFaceTimer();
 
         }
@@ -102,6 +107,33 @@ namespace App1
 
         }
 
+        public void infoTimer()
+        {
+            DispatcherTimer disptime;
+            disptime = new DispatcherTimer();
+
+            disptime.Interval = new TimeSpan(0, 0, 2);
+            disptime.Tick += Disp_UpdateInfo;
+
+            disptime.Start();
+
+        }
+
+        private void Disp_UpdateInfo(object sender, object e)
+        {
+            if (Infostring != null)
+            {
+                tbl_Info.Text = WorkWithInfo(Infostring);
+            }
+
+        }
+
+        private string WorkWithInfo(string info)
+        {
+            return info.ToString();
+        }
+
+
         public void CheckFaceTimer()
         {
             DispatcherTimer disptime;
@@ -145,7 +177,7 @@ namespace App1
         {
             var photodir = await KnownFolders.PicturesLibrary.GetFileAsync(PHOTO_FILE_NAME);
             string photo =  photodir.Path;
-
+            
             string picdir = photo.Substring(0, photo.Length - 9);
 
             
@@ -191,7 +223,7 @@ namespace App1
             }
 
 
-            string testImageFile = photo;
+             string testImageFile = photo;
 
 
                 
@@ -215,7 +247,8 @@ namespace App1
                         var emotion = attributes.Emotion;
                         //var emotionlist = emotion.ToRankedList();
                         // emo = emotionlist.Max().Value;
-                       // emotionstring = emotion.Happiness.ToString();
+                        // emotionstring = emotion.Happiness.ToString();
+                        Infostring = "ID: " + id.ToString() + "," + "Age: " + age.ToString() + "," + "Gender: " + gender.ToString() + "," + "Glasses: " + glasses.ToString();
                        
                          
                     }
@@ -236,7 +269,7 @@ namespace App1
                             // Id of the person group that the person belonged to
                             personGroupId,
                             // Name of the person
-                            "Face " + results.Count()
+                            "Face"
                         );
 
                             for (int z = 0; z < 6; z++)
@@ -271,11 +304,7 @@ namespace App1
 
                                 await Task.Delay(1000);
                             }
-                            var candidateId = identifyResult.Candidates[0].PersonId;
-                            var person = await faceServiceClient.GetPersonAsync(personGroupId, candidateId);
-
-
-                            activeId = person.Name;
+                            Task t = Task.Run(() => { CheckFace(); }) ;
 
                         }
                         else
@@ -296,7 +325,7 @@ namespace App1
             }
             catch(Exception e)
             {
-                activeId = "Main: " + e.InnerException.Message;
+                activeId = "Main: " + activeId;
 
             }
 
@@ -315,6 +344,9 @@ namespace App1
         private async void takePhoto()
         {
             Face[] face;
+            int tries = 0;
+            do
+            {
 
             Random r = new Random();
             photostorage = await KnownFolders.PicturesLibrary.CreateFileAsync(PHOTO_FILE_NAME, CreationCollisionOption.ReplaceExisting);
@@ -331,10 +363,18 @@ namespace App1
                 face = faces;
 
             }
-            if (face.Length <= 0)
-            {
-                takePhoto();
-            }
+
+                if (face.Length > 0)
+                {
+
+                    tries = 3;
+                }
+                if (tries >= 3)
+                {
+                    activeId = "Hello? is someone there?";
+                }
+                tries++;
+            } while (tries < 3);
         }
 
 
@@ -361,7 +401,6 @@ namespace App1
                 
                 var photodir = await KnownFolders.PicturesLibrary.GetFileAsync(PHOTO_FILE_NAME);
                 string photo = photodir.Path;
-
                 var requiredFaceAttributes = new FaceAttributeType[] {
                 FaceAttributeType.Age,
                 FaceAttributeType.Gender,
@@ -373,12 +412,18 @@ namespace App1
             };
 
 
-                using (Stream s = File.OpenRead(photo))
+                string testImageFile = photo;
+
+
+
+                using (Stream s = File.OpenRead(testImageFile))
                 {
-                    var faces = await faceServiceClient.DetectAsync(s, returnFaceLandmarks: false,
-                    returnFaceAttributes: requiredFaceAttributes);
+                    var faces = await faceServiceClient.DetectAsync(s, returnFaceLandmarks: true,
+                        returnFaceAttributes: requiredFaceAttributes);
+
                     foreach (var faceinfo in faces)
                     {
+
                         var id = faceinfo.FaceId;
                         var attributes = faceinfo.FaceAttributes;
                         var age = attributes.Age;
@@ -388,9 +433,15 @@ namespace App1
                         var headPose = attributes.HeadPose;
                         var glasses = attributes.Glasses;
                         var emotion = attributes.Emotion;
-                        }
+                        //var emotionlist = emotion.ToRankedList();
+                        // emo = emotionlist.Max().Value;
+                        // emotionstring = emotion.Happiness.ToString();
+                        Infostring = "ID: " + id.ToString() + "," + "Age: " + age.ToString() + "," + "Gender: " + gender.ToString() + "," + "Glasses: " + glasses.ToString();
 
-                        var faceIds = faces.Select(face => face.FaceId).ToArray();
+
+                    }
+
+                    var faceIds = faces.Select(face => face.FaceId).ToArray();
                     var results = await faceServiceClient.IdentifyAsync(personGroupId, faceIds);
 
 
@@ -418,7 +469,7 @@ namespace App1
             }
             catch (Exception e)
             {
-                activeId = "CheckFace= " + e.Message + e.StackTrace;
+                activeId = "CheckFace= " + activeId;
             }
         }
 
