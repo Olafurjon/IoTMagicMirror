@@ -20,9 +20,9 @@
                 <CaptureElement Height="738" Width="600" Canvas.Left="3" Canvas.Top="-1"/>
             </Canvas>
         </StackPanel>
-        <TextBlock x:Name="tbl_status" HorizontalAlignment="Left" Margin="36,875,0,0" TextWrapping="Wrap" Text="Status" VerticalAlignment="Top" SelectionChanged="tbl_timenow_SelectionChanged" Foreground="White" FontSize="40" Height="94" Width="558"/>
-        <TextBlock x:Name="tbl_Info" HorizontalAlignment="Left" Margin="36,60,0,0" TextWrapping="Wrap" Text="info" VerticalAlignment="Top" SelectionChanged="tbl_timenow_SelectionChanged" Foreground="White" FontSize="40" Height="188" Width="251"/>
-        <TextBlock x:Name="tbl_dateNow" HorizontalAlignment="Center" Margin="433,82,0,0" TextWrapping="Wrap" VerticalAlignment="Top" SelectionChanged="tbl_timenow_SelectionChanged" Foreground="White" FontSize="40" Width="207" Height="75" Text="xx/xx/xxxx" RenderTransformOrigin="0.57,0.469"/>
+        <TextBlock x:Name="tbl_status" HorizontalAlignment="Left" Margin="52,820,0,0" TextWrapping="Wrap" Text="Status" VerticalAlignment="Top" SelectionChanged="tbl_timenow_SelectionChanged" Foreground="White" FontSize="40" Height="113" Width="543"/>
+        <TextBlock x:Name="tbl_Info" HorizontalAlignment="Left" Margin="52,60,0,0" TextWrapping="Wrap" Text="info" VerticalAlignment="Top" SelectionChanged="tbl_timenow_SelectionChanged" Foreground="White" FontSize="40" Height="188" Width="376"/>
+        <TextBlock x:Name="tbl_dateNow" HorizontalAlignment="Center" Margin="433,113,0,0" TextWrapping="Wrap" VerticalAlignment="Top" SelectionChanged="tbl_timenow_SelectionChanged" Foreground="White" FontSize="40" Width="207" Height="75" Text="xx/xx/xxxx" RenderTransformOrigin="0.57,0.469"/>
         <TextBlock x:Name="tbl_pun" Margin="78,350,83,259" TextWrapping="Wrap" Text="" VerticalAlignment="Center" SelectionChanged="tbl_timenow_SelectionChanged" Foreground="White" FontSize="40" Height="415" Width="479" HorizontalAlignment="Center"/>
 
 

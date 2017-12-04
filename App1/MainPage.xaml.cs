@@ -47,8 +47,11 @@ namespace App1
         string personname;
         double personsmile;
         string pun;
+        string newname;
         public List<string> notalonepun = new List<string>();
         public List<string> possiblepuns = new List<string>();
+        private List<string> possibleStats = new List<string>();
+        public List<string> Infostrings = new List<string>();
         string personId;
         int rounds = 0;
         List<object[]> VisitedPersons = new List<object[]>();
@@ -85,8 +88,9 @@ namespace App1
 
             this.InitializeComponent();
             FillNotAloneList(); //Var í miðju progressi hér kemur basically mögulegar línur sem kemur á spegilinn þegar að það eru fleiri en 1 andlit 
-          //var name = InputTextDialogAsync("Input Name");
-            //name.Start();
+            PunMaker();
+
+
             timetest();
             viewCamera();
             Task P = Task.Run(() => { takePhoto(); }); //Takephoto verður á keyra á sínum eigin þræði eða allavega ekki á sama þræði
@@ -131,7 +135,7 @@ namespace App1
             DispatcherTimer disptime;
             disptime = new DispatcherTimer();
 
-            disptime.Interval = new TimeSpan(0, 0, 15);
+            disptime.Interval = new TimeSpan(0, 0, 45);
             disptime.Tick += disp_pun;
 
             disptime.Start();
@@ -143,13 +147,14 @@ namespace App1
 
             if (!punactive )
             {
-                if (possiblepuns.Count() != 0)
+                if (possiblepuns.Count() > 0)
                 {
                     Random ran = new Random();
                     int index = ran.Next(0, possiblepuns.Count());
                     pun = possiblepuns[index];
-                    possiblepuns.RemoveAt(index);
+                    
                     tbl_pun.Text = pun.ToString();
+                    //possiblepuns.RemoveAt(index);
                     punactive = true;
                 }
             }
@@ -187,7 +192,8 @@ namespace App1
             DispatcherTimer disptime;
             disptime = new DispatcherTimer();
 
-            disptime.Interval = new TimeSpan(0, 0, 2);
+            disptime.Interval = new TimeSpan(0, 0, 15);
+
             disptime.Tick += Disp_UpdateInfo;
 
             disptime.Start();
@@ -196,9 +202,13 @@ namespace App1
 
         private void Disp_UpdateInfo(object sender, object e)
         {
+            Random rand = new Random();
+            int index = rand.Next(0, Infostrings.Count);
+            var count = Infostrings.Count();
             if (Infostring != null)
             {
-                tbl_Info.Text = WorkWithInfo(Infostring);
+                tbl_Info.Text = Infostrings[index];
+
             }
 
         }
@@ -331,6 +341,8 @@ namespace App1
             {
 
 
+
+
                 if (nofaces)
                 {
                     return;
@@ -353,23 +365,23 @@ namespace App1
 
                            await faceServiceClient.DeletePersonAsync(personGroupId,Guid.Parse(personlist[i]));
                        }*/
-                    await faceServiceClient.TrainPersonGroupAsync(personGroupId);
+                    //await faceServiceClient.TrainPersonGroupAsync(personGroupId);
 
-                TrainingStatus trainingStatus = null;
-                while (true)
-                {
-                    trainingStatus = await faceServiceClient.GetPersonGroupTrainingStatusAsync(personGroupId);
-
-                    if (trainingStatus.Status.ToString() != "running")
+                    TrainingStatus trainingStatus = null;
+                    while (true)
                     {
-                        break;
+                        trainingStatus = await faceServiceClient.GetPersonGroupTrainingStatusAsync(personGroupId);
+
+                        if (trainingStatus.Status.ToString() != "running")
+                        {
+                            break;
+                        }
+
+                        await Task.Delay(1000);
                     }
 
-                    await Task.Delay(1000);
-                }
 
-
-                string testImageFile = photo;
+                    string testImageFile = photo;
 
 
 
@@ -378,6 +390,7 @@ namespace App1
                     {
                         var faces = await faceServiceClient.DetectAsync(s, returnFaceLandmarks: true,
                             returnFaceAttributes: requiredFaceAttributes);
+
 
                         foreach (var faceinfo in faces)
                         {
@@ -404,15 +417,17 @@ namespace App1
                                 firstface = false;
 
                             }
+                            updadeInfoList();
 
-
+                            // emo = emotionlist.Max().Value;
+                            // emotionstring = emotion.Happiness.ToString();
+                            //Infostring = "ID: " + id.ToString() + "," + "Age: " + age.ToString() + "," + "Gender: " + gender.ToString() + "," + "Glasses: " + glasses.ToString();
+                            Infostring = mood;
                         }
 
-                        //emo.ToString();
 
                         var faceIds = faces.Select(face => face.FaceId).ToArray();
                         var results = await faceServiceClient.IdentifyAsync(personGroupId, faceIds);
-
 
 
                         foreach (var identifyResult in results)
@@ -420,70 +435,129 @@ namespace App1
                             //  tbl_status.Text = ("Result of face: " + identifyResult.FaceId);
                             if (identifyResult.Candidates.Length == 0)
                             {
-                                var name = InputTextDialogAsync("Input Name");
-                                //string name = await InputTextDialogAsync("Input Name");
-                                //tbl_status.Text = ("No one identified, i will add you now, your new name is Bill");
-                                CreatePersonResult friend1 = await faceServiceClient.CreatePersonAsync(
-                                // Id of the person group that the person belonged to
-                                personGroupId,
-                                // Name of the person
-                                "Elvis"
-                            );
+                                /*
+                                Task nn = Task.Run(async () => { newname = await ReqName(); });
+                                nn.Wait();
 
-                                for (int z = 0; z < 6; z++)
+
+
+
+                                if (nn.IsCompleted)
                                 {
-                                    Random r = new Random();
-                                    photostorage = await KnownFolders.PicturesLibrary.CreateFileAsync((z + PHOTO_FILE_NAME), CreationCollisionOption.ReplaceExisting);
-                                    ImageEncodingProperties imageProperties = ImageEncodingProperties.CreateJpeg();
-                                    await mediaCapture.CapturePhotoToStorageFileAsync(imageProperties, photostorage);
-                                    var friend1ImageDir = await KnownFolders.PicturesLibrary.GetFileAsync(z + PHOTO_FILE_NAME);
-                                    string imagePath = friend1ImageDir.Path;
+                                    //string name = await InputTextDialogAsync("Input Name");
+                                    //tbl_status.Text = ("No one identified, i will add you now, your new name is Bill");
+                                    CreatePersonResult friend1 = await faceServiceClient.CreatePersonAsync(
+                                    // Id of the person group that the person belonged to
+                                    personGroupId,
+                                    // Name of the person
+                                    newname
+                                );
 
-                                    using (Stream k = File.OpenRead(imagePath))
+                                    for (int z = 0; z < 6; z++)
                                     {
-                                        await faceServiceClient.AddPersonFaceAsync(
-                                            personGroupId, friend1.PersonId, k);
+                                        Random r = new Random();
+                                        photostorage = await KnownFolders.PicturesLibrary.CreateFileAsync((z + PHOTO_FILE_NAME), CreationCollisionOption.ReplaceExisting);
+                                        ImageEncodingProperties imageProperties = ImageEncodingProperties.CreateJpeg();
+                                        await mediaCapture.CapturePhotoToStorageFileAsync(imageProperties, photostorage);
+                                        var friend1ImageDir = await KnownFolders.PicturesLibrary.GetFileAsync(z + PHOTO_FILE_NAME);
+                                        string imagePath = friend1ImageDir.Path;
+
+                                        using (Stream k = File.OpenRead(imagePath))
+                                        {
+                                            await faceServiceClient.AddPersonFaceAsync(
+                                                personGroupId, friend1.PersonId, k);
+                                        }
+
                                     }
+
+
+                                    await faceServiceClient.TrainPersonGroupAsync(personGroupId);
+
+                                    trainingStatus = null;
+                                    while (true)
+                                    {
+                                        trainingStatus = await faceServiceClient.GetPersonGroupTrainingStatusAsync(personGroupId);
+
+                                        if (trainingStatus.Status.ToString() != "running")
+                                        {
+                                            break;
+                                        }
+
+                                        await Task.Delay(1000);
+                                    }
+                                    CheckFace();
+
+                                }
+                                else
+                                {
 
                                 }
 
-
-                                await faceServiceClient.TrainPersonGroupAsync(personGroupId);
-
-                                trainingStatus = null;
-                                while (true)
-                                {
-                                    trainingStatus = await faceServiceClient.GetPersonGroupTrainingStatusAsync(personGroupId);
-
-                                    if (trainingStatus.Status.ToString() != "running")
-                                    {
-                                        break;
-                                    }
-
-                                    await Task.Delay(1000);
-                                }
-                                CheckFace();
-
+*/
                             }
                             else
                             {
-
-                                // Get top 1 among all candidates returned
                                 var candidateId = identifyResult.Candidates[0].PersonId;
                                 var person = await faceServiceClient.GetPersonAsync(personGroupId, candidateId);
+                                personname = person.Name;
+
                                 //tbl_status.Text = ("Identified as " + person.Name);
                                 //activeId = person.Name.ToString();
-                                //await faceServiceClient.UpdatePersonAsync(personGroupId, person.PersonId, "Ólafur Jón");
-                                activeId = person.Name.ToString() + " " + rounds;
+                                if (VisitedPersons.Count() != 0)
+                                {
+                                    foreach (var check in VisitedPersons)
+                                    {
 
+
+                                        if (check[0] == activeperson[0])
+                                        {
+                                            int comeandgo = Convert.ToInt32(check[8]);
+                                            comeandgo++;
+                                            check[3] = mood;
+                                            check[4] = hasglasses;
+                                            check[6] = personsmile;
+                                            check[8] = comeandgo;
+                                            check[7] = true;
+                                            activeperson = check;
+                                            if (check[2].ToString().ToLower() == "female")
+                                            {
+                                                activeId = "You are looking good gurl ";
+                                            }
+                                            if (check[2].ToString().ToLower() == "male")
+                                            {
+                                                activeId = "You are looking good man! ";
+                                            }
+                                            else if(comeandgo  > 1)
+                                            {
+                                                activeId = "Welcome Back " + check[0];
+                                            }
+
+
+                                        }
+                                        else
+                                        {
+
+                                            AddPersonToVisited(personname, personage, persongender, mood, hasglasses, personId, personsmile, false, 0);
+                                            activeId = greeting() + person.Name.ToString();
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    AddPersonToVisited(personname, personage, persongender, mood, hasglasses, personId, personsmile, false, 0);
+                                    activeId = greeting() + activeperson[0].ToString();
+
+                                }
 
                             }
                         }
                     }
-                   
-                    rounds++;
                 }
-                grouptestFinished = true;
+                
+            
+                
+        
+        grouptestFinished = true;
             }
             catch (Exception e)
             {
@@ -572,6 +646,18 @@ namespace App1
                     string photo = photodir.Path;
 
                     string testImageFile = photo;
+                    TrainingStatus trainingStatus = null;
+                    while (true)
+                    {
+                        trainingStatus = await faceServiceClient.GetPersonGroupTrainingStatusAsync(personGroupId);
+
+                        if (trainingStatus.Status.ToString() != "running")
+                        {
+                            break;
+                        }
+
+                        await Task.Delay(1000);
+                    }
 
                     if (nofaces)
                     {
@@ -611,7 +697,8 @@ namespace App1
                                     firstface = false;
                                     
                                 }
-                                    
+                                updadeInfoList();
+
                                 // emo = emotionlist.Max().Value;
                                 // emotionstring = emotion.Happiness.ToString();
                                 //Infostring = "ID: " + id.ToString() + "," + "Age: " + age.ToString() + "," + "Gender: " + gender.ToString() + "," + "Glasses: " + glasses.ToString();
@@ -628,11 +715,67 @@ namespace App1
                                     //  tbl_status.Text = ("Result of face: " + identifyResult.FaceId);
                                     if (identifyResult.Candidates.Length == 0)
                                     {
-                                        //NewUser
-                                        activeId = "createnewUser";
+                                    /*
+                                    Task nn = Task.Run(async () => { newname = await ReqName(); });
+                                    nn.Wait();
+
+
+
+
+                                    if (nn.IsCompleted)
+                                    {
+                                        //string name = await InputTextDialogAsync("Input Name");
+                                        //tbl_status.Text = ("No one identified, i will add you now, your new name is Bill");
+                                        CreatePersonResult friend1 = await faceServiceClient.CreatePersonAsync(
+                                        // Id of the person group that the person belonged to
+                                        personGroupId,
+                                        // Name of the person
+                                        newname
+                                    );
+
+                                        for (int z = 0; z < 6; z++)
+                                        {
+                                            Random r = new Random();
+                                            photostorage = await KnownFolders.PicturesLibrary.CreateFileAsync((z + PHOTO_FILE_NAME), CreationCollisionOption.ReplaceExisting);
+                                            ImageEncodingProperties imageProperties = ImageEncodingProperties.CreateJpeg();
+                                            await mediaCapture.CapturePhotoToStorageFileAsync(imageProperties, photostorage);
+                                            var friend1ImageDir = await KnownFolders.PicturesLibrary.GetFileAsync(z + PHOTO_FILE_NAME);
+                                            string imagePath = friend1ImageDir.Path;
+
+                                            using (Stream k = File.OpenRead(imagePath))
+                                            {
+                                                await faceServiceClient.AddPersonFaceAsync(
+                                                    personGroupId, friend1.PersonId, k);
+                                            }
+
+                                        }
+
+
+                                        await faceServiceClient.TrainPersonGroupAsync(personGroupId);
+
+                                        trainingStatus = null;
+                                        while (true)
+                                        {
+                                            trainingStatus = await faceServiceClient.GetPersonGroupTrainingStatusAsync(personGroupId);
+
+                                            if (trainingStatus.Status.ToString() != "running")
+                                            {
+                                                break;
+                                            }
+
+                                            await Task.Delay(1000);
+                                        }
+                                        CheckFace();
 
                                     }
                                     else
+                                    {
+
+                                    }
+
+    */
+                                }
+                                else
                                     {
                                         var candidateId = identifyResult.Candidates[0].PersonId;
                                         var person = await faceServiceClient.GetPersonAsync(personGroupId, candidateId);
@@ -723,6 +866,55 @@ namespace App1
         }
 
 
+
+        private async Task<string> ReqName()
+        {
+
+            var dialog1 = new ContentDialog1();
+            var result = await dialog1.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                return dialog1.Text;
+            }
+            return null;
+        }
+
+        private void updadeInfoList()
+        {
+            Infostrings.Clear();
+            Infostrings.Add("You Can when you believe you can");
+            if(personsmile > 60)
+            {
+                Infostrings.Add("What a Nice Smile");
+            }
+            if(personage > 40)
+            {
+                Infostrings.Add("Hmm, you look like you are 26 years old.");
+            }
+            if(hasglasses.ToString().ToLower() != "noglasses")
+            {
+                Infostrings.Add("I like your " + hasglasses.ToString());
+            }
+            if(mood.ToLower() == "neutral")
+            {
+                Infostrings.Add("Dont forget to smile to yourself.");
+            }
+            if(mood.ToLower() == "happy")
+            {
+                Infostrings.Add("Wow your happiness is infecting");
+            }
+        }
+
+        private void PunMaker()
+        {
+            possiblepuns.Add("Oh... It's you i was hoping for someone else...");
+            possiblepuns.Add("What is that behind you?");
+
+        }
+            
+        
+
+
         private void tbl_timenow_SelectionChanged(object sender, RoutedEventArgs e)
         {
 
@@ -734,3 +926,4 @@ namespace App1
         }
     }
 }
+
