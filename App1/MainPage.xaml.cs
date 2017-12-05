@@ -11,6 +11,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media;
 using Windows.Media.Capture; //Þetta þarf til þess að nota vefmyndavélina
 using Windows.Media.MediaProperties;
@@ -21,6 +22,7 @@ using Windows.Storage; //auðveldar Windows öppum að fara bara í known folder
 using Microsoft.ProjectOxford.Common.Contract; //Þetta er fyrir APIið til að virka
 using Microsoft.ProjectOxford.Face;
 using Microsoft.ProjectOxford.Face.Contract;
+
 
 
 
@@ -38,6 +40,7 @@ namespace App1
         string activeId;
         string Infostring = null;
         string mood;
+        bool many;
         bool punactive = false;
         double personage;
         string hasglasses;
@@ -48,6 +51,9 @@ namespace App1
         double personsmile;
         string pun;
         string newname;
+        Task Anim;
+        private readonly Random _random = new Random();
+        private int _animationId = 0;
         public List<string> notalonepun = new List<string>();
         public List<string> possiblepuns = new List<string>();
         private List<string> possibleStats = new List<string>();
@@ -87,8 +93,9 @@ namespace App1
         {
 
             this.InitializeComponent();
-            FillNotAloneList(); //Var í miðju progressi hér kemur basically mögulegar línur sem kemur á spegilinn þegar að það eru fleiri en 1 andlit 
-            PunMaker();
+  
+
+
 
 
             timetest();
@@ -96,7 +103,8 @@ namespace App1
             Task P = Task.Run(() => { takePhoto(); }); //Takephoto verður á keyra á sínum eigin þræði eða allavega ekki á sama þræði
             P.Wait(); //er með þetta til öryggis gæti komíð í veg fyrir að hitt lesi myndina í miðjum klíðum við að vista hana
             Task.Delay(1000); //annað backup til þess að vera viss um að ég fái ekki imagesize to small.. 
-            
+
+
             Task t = Task.Run(() => { //groupest verður að vera keyrt á sínum eigin þræði líka
                 GroupTest();
                 //CheckFace();
@@ -158,7 +166,7 @@ namespace App1
                     punactive = true;
                 }
             }
-            if(punactive)
+            else if(punactive)
             {
                 tbl_pun.Text = "";
                 punactive = false;
@@ -287,10 +295,12 @@ namespace App1
             {
                 greetingtime = "night";
             }
+            
+            
 
 
 
-            time[0] = string.Format("{0:D2}:{1:D2}:{2:D2} {3}/{4}/{5}", t.Hours, t.Minutes, t.Seconds, dt.Day,dt.Month,dt.Year);
+            time[0] = string.Format("{0:D2}:{1:D2}:{2:D2}", t.Hours, t.Minutes, t.Seconds);
             time[1] = string.Format("{0:D2}/{1}/{2}", dt.Day, dt.Month, dt.Year);
             return time;
         }
@@ -497,6 +507,9 @@ namespace App1
                             }
                             else
                             {
+                                FillNotAloneList(); //Var í miðju progressi hér kemur basically mögulegar línur sem kemur á spegilinn þegar að það eru fleiri en 1 andlit 
+                                PunMaker();
+
                                 var candidateId = identifyResult.Candidates[0].PersonId;
                                 var person = await faceServiceClient.GetPersonAsync(personGroupId, candidateId);
                                 personname = person.Name;
@@ -574,7 +587,7 @@ namespace App1
             mediaCapture = new MediaCapture();
             await mediaCapture.InitializeAsync();
 
-          // CameraPreview.Source = mediaCapture;
+          //CameraPreview.Source = mediaCapture;
            //await mediaCapture.StartPreviewAsync();
 
         }
@@ -582,6 +595,7 @@ namespace App1
         //fall sem tekur mynd, það var að rugla í þessu að hafa þetta í while loopu en eftir að ég breytti þessu aðeins minnkaði töluvert villurnar um ImageSize to small
         private async void takePhoto()
         {
+            
             int tries = 0;
             nofaces = false;
                 Face[] face;
@@ -602,21 +616,22 @@ namespace App1
                 //flest hérna útskýrir sig sjálft
                 if (face.Length <= 0)
                 {
-                possiblepuns.Add("Lonely, i am so Lonely i have nobody...");
+                    possiblepuns.Add("Lonely, i am so Lonely i have nobody...");
                     activeId = "Hello? is someone there?";
                     Infostring = "Nobody is home";
                      nofaces = true;
+                     many = false;
                 }
                 else if( face.Length > 1)
                 {
                 Random nr = new Random();
 
-
+                many = true;
                 possiblepuns.Add(notalonepun[nr.Next(0, notalonepun.Count())]);
                 }
                 else
                 {
-                nofaces = false;
+                many = false;
                     // activeId = "Hello? is someone there?";
                 }
                 tries++;
@@ -665,6 +680,9 @@ namespace App1
                     }
                     else
                     {
+                        FillNotAloneList(); //Var í miðju progressi hér kemur basically mögulegar línur sem kemur á spegilinn þegar að það eru fleiri en 1 andlit 
+                        PunMaker();
+
                         bool firstface = true;
                         using (Stream s = File.OpenRead(await GetPhoto()))
                         {
@@ -799,19 +817,52 @@ namespace App1
                                                     check[8] = comeandgo;
                                                     check[7] = true;
                                                     activeperson = check;
-                                                    if (check[2].ToString().ToLower() == "female")
-                                                    {
-                                                        activeId = "You are looking good gurl ";
-                                                     }
-                                                    if (check[2].ToString().ToLower() == "male")
-                                                    {
-                                                        activeId = "You are looking good man! ";
-                                                    }
+
+                                                if (many)
+                                                {
+                                                    possibleStats.Add("It's good to see you have friends " + check[0]);
+                                                    possibleStats.Add("It's nice to see you are not alone " + check[0]);
+                                                }
+                                                if (check[2].ToString().ToLower() == "female")
+                                                {
+                                                    possibleStats.Add("You are looking good girl");
+                                                }
+                                                if (check[2].ToString().ToLower() == "male")
+                                                {
+                                                    possibleStats.Add("You are looking good man! ");
+                                                }
+                                                if(check[4].ToString().ToLower() != "NOGLASSES")
+                                                {
+                                                    possibleStats.Add("Woah " + check[0].ToString() + " I like your glasses ");
+                                                }
+                                                if (Convert.ToDouble(check[6]) > 50)
+                                                {
+                                                    possibleStats.Add("You have a nice smile " + check[0]);
+                                                }
+                                                Random r = new Random();
+                                                activeId = possibleStats[r.Next(0, possibleStats.Count)];
+                                                }
+                                            else if(personname == check[0].ToString())
+                                            {
+                                                
+                                                int comeandgo = Convert.ToInt32(check[8]);
+                                                comeandgo++;
+                                                check[3] = mood;
+                                                check[4] = hasglasses;
+                                                check[6] = personsmile;
+                                                check[8] = comeandgo;
+                                                check[7] = true;
+                                                activeperson = check;
+                                                activeId = "I missed you " + personname;
+
+                                                
 
 
-                                               }
+                                                
+                                            }
                                                else
                                                {
+
 
                                                    AddPersonToVisited(personname, personage, persongender, mood, hasglasses, personId, personsmile, false, 0);
                                                    activeId = greeting() + person.Name.ToString();
@@ -830,13 +881,16 @@ namespace App1
                             }
                         }
                     }
+               
                 else { }
+                rounds++;
             }
                
             catch (Exception e)
             {
                 activeId = "CheckFace= " + activeId;
                 //CheckFace();
+                rounds++;
             }
             
             
@@ -863,6 +917,7 @@ namespace App1
             notalonepun.Add("Ah how nice you are not alone i was beginning to worry ");
             notalonepun.Add("I see you have your dog with you ");
             notalonepun.Add("Oh... you brought this with you...");
+            
         }
 
 
@@ -909,10 +964,112 @@ namespace App1
         {
             possiblepuns.Add("Oh... It's you i was hoping for someone else...");
             possiblepuns.Add("What is that behind you?");
+            possiblepuns.Add("What do you call a laughing motorcycle? A Yamahahaha.");
+            possiblepuns.Add("Did you hear about the guy who got hit in the head with a can of soda? He was lucky it was a soft drink.");
+            possiblepuns.Add("Why is peter pan always flying ? He neverlands.");
+            possiblepuns.Add("Did you hear about the mathematician who was afraid of negative numbers? He’d stop at nothing to avoid them.");
+            possiblepuns.Add("Q: Why did the tomato blush? \r\n A: Because it saw the salad dressing.");
 
         }
-            
-        
+
+     private async void AnimateImage(Func<FrameworkElement> image, double minTime, double maxTime) //, Func<double> imgWidth
+        {
+            await Task.Yield();
+            var minWidth = 300;
+            var maxWidth = 2560;
+
+            var width = ActualWidth;
+            var percentage = (width - minWidth) / (maxWidth - minWidth);
+            var myTime = maxTime - percentage * (maxTime - minTime);
+
+            while (true)
+            {
+                var imageElement = image();
+                double w = imageElement.Width;
+
+                var animation = new Storyboard();
+                var duration = new Duration(TimeSpan.FromMilliseconds(1000 * (16 + _random.Next() % 9)));
+
+                var resname = $"animation{_animationId++ % 1000000}";
+                Resources.Add(resname, animation);
+
+
+                var transGroup = new TransformGroup();
+                imageElement.RenderTransform = transGroup;
+
+                var rotateTransform = new RotateTransform();
+                transGroup.Children.Add(rotateTransform);
+                animation.Children.Add(AnimateDouble(rotateTransform, nameof(RotateTransform.Angle), 0, _random.Next(-270, 270), duration));
+
+                if (_random.Next() % 2 == 0)
+                {
+                    transGroup.Children.Add(new ScaleTransform { ScaleX = -1, ScaleY = 1 });
+                }
+
+                var moveTransform = new TranslateTransform
+                {
+                    X = _random.Next((int)(-w / 2), (int)(ActualWidth + w / 2))
+                };
+                transGroup.Children.Add(moveTransform);
+                animation.Children.Add(AnimateDouble(moveTransform, "Y", -w, ActualHeight + w, duration));
+
+
+
+                RootCanvas.Children.Add(imageElement);
+                animation.Begin();
+
+                EventHandler<object> completion = null;
+                completion = (o, e) =>
+                {
+                    animation.Completed -= completion;
+                    Resources.Remove(resname);
+                    RootCanvas.Children.Remove(imageElement);
+                };
+                animation.Completed += completion;
+
+                await Task.Delay((int)(myTime * 1000));
+            }
+
+            // ReSharper disable once FunctionNeverReturns
+        }
+
+        private DoubleAnimation AnimateDouble(DependencyObject target, string property, double? fromValue, double? toValue, Duration duration)
+        {
+            var animation = new DoubleAnimation
+            {
+                From = fromValue,
+                To = toValue,
+                Duration = duration,
+            };
+
+            Storyboard.SetTarget(animation, target);
+            Storyboard.SetTargetProperty(animation, property);
+
+            return animation;
+
+
+        }
+
+        public void SnjokornFalla()
+        {
+            if (rounds % 4 == 0)
+            {
+                
+                AnimateImage(() =>
+                {
+                    var w = _random.Next(20, 60);
+                    return new Image
+                    {
+                        Width = w,
+                        Height = w,
+                        Source = new BitmapImage(new Uri("ms-appx:///Assets/flake.png"))
+                    };
+                }, 0.03, 0.12);
+                activeId = "I love Snow";
+            }
+        }
+
+     
 
 
         private void tbl_timenow_SelectionChanged(object sender, RoutedEventArgs e)
