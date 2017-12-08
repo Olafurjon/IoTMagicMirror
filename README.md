@@ -6,3 +6,5 @@ Verkefnið snýst um að forrita Raspberry Pi 3 sem keyrir Windows Core IoT stý
 Það sem ég er að vinna með er að útfæra Windows App sem myndi vinna með Face API frá microsoft sem vinnur úr andlitsgreinningu. þá tengi ég Myndavél við PIinn og er ætlunin að hún læri andlit og bjóði þá persónulegri kveðjur og einnig er gripið upplýsingar eins og aldur, gleraugu og skap, og þar sem að hægt verður að greina nákvæmega hvar andlitið er er fullt annað í boði.
 
 skoðað verður betur hvað er hægt að implementa þegar nær dregur.
+
+Ég mun setja universal Console C# forrit hérna með til að bara bæta við andlitum í facegroup grúbbuna. spegillinn hefur væntanlega ekki verkið að virka eðlielga þar sem að subkeyin minn er útrunninn, var að sækja um nýja núna
