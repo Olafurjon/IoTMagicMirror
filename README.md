@@ -8,3 +8,6 @@ Verkefnið snýst um að forrita Raspberry Pi 3 sem keyrir Windows Core IoT stý
 skoðað verður betur hvað er hægt að implementa þegar nær dregur.
 
 Ég mun setja universal Console C# forrit hérna með til að bara bæta við andlitum í facegroup grúbbuna. spegillinn hefur væntanlega ekki verkið að virka eðlielga þar sem að subkeyin minn er útrunninn, var að sækja um nýja núna
+
+
+Console forritið komið inn en hef ekki getað staðfest virkni þar sem að Subscription keyarnir eru ekki búnir að endurnýjjast eftir að ég óskaði eftir því, ef það verður ekki komið á morgun ætla ég að búa til nýjan acc tengdu öðru email og prófa það, nema þá mun væntanlgea gagnagrunnurinn með öllum andlituum hverfa svo ég þyrfti að nota console forritið til að setja inn andlitn
