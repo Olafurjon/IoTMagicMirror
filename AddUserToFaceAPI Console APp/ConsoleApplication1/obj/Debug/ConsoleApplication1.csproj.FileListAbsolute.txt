@@ -1,0 +1,16 @@
+F:\OneDrive\Tskoli2017seinni\VEF3B\ConsoleApplication1\ConsoleApplication1\bin\Debug\ConsoleApplication1.exe.config
+F:\OneDrive\Tskoli2017seinni\VEF3B\ConsoleApplication1\ConsoleApplication1\obj\Debug\ConsoleApplication1.csprojResolveAssemblyReference.cache
+F:\OneDrive\Tskoli2017seinni\VEF3B\ConsoleApplication1\ConsoleApplication1\bin\Debug\ConsoleApplication1.exe
+F:\OneDrive\Tskoli2017seinni\VEF3B\ConsoleApplication1\ConsoleApplication1\bin\Debug\ConsoleApplication1.pdb
+F:\OneDrive\Tskoli2017seinni\VEF3B\ConsoleApplication1\ConsoleApplication1\obj\Debug\ConsoleApplication1.exe
+F:\OneDrive\Tskoli2017seinni\VEF3B\ConsoleApplication1\ConsoleApplication1\obj\Debug\ConsoleApplication1.pdb
+F:\OneDrive\Tskoli2017seinni\VEF3B\ConsoleApplication1\ConsoleApplication1\bin\Debug\Json.NET.Web.dll
+F:\OneDrive\Tskoli2017seinni\VEF3B\ConsoleApplication1\ConsoleApplication1\bin\Debug\Microsoft.ProjectOxford.Common.dll
+F:\OneDrive\Tskoli2017seinni\VEF3B\ConsoleApplication1\ConsoleApplication1\bin\Debug\Microsoft.ProjectOxford.Face.dll
+F:\OneDrive\Tskoli2017seinni\VEF3B\ConsoleApplication1\ConsoleApplication1\bin\Debug\Newtonsoft.Json.dll
+F:\OneDrive\Tskoli2017seinni\VEF3B\ConsoleApplication1\ConsoleApplication1\bin\Debug\System.Net.Http.Extensions.dll
+F:\OneDrive\Tskoli2017seinni\VEF3B\ConsoleApplication1\ConsoleApplication1\bin\Debug\System.Net.Http.Primitives.dll
+F:\OneDrive\Tskoli2017seinni\VEF3B\ConsoleApplication1\ConsoleApplication1\bin\Debug\Newtonsoft.Json.xml
+F:\OneDrive\Tskoli2017seinni\VEF3B\ConsoleApplication1\ConsoleApplication1\bin\Debug\System.Net.Http.Extensions.xml
+F:\OneDrive\Tskoli2017seinni\VEF3B\ConsoleApplication1\ConsoleApplication1\bin\Debug\System.Net.Http.Primitives.xml
+F:\OneDrive\Tskoli2017seinni\VEF3B\ConsoleApplication1\ConsoleApplication1\obj\Debug\ConsoleApplication1.csproj.App.config
