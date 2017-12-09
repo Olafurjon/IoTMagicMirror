@@ -21,6 +21,7 @@ using System.Threading;
 using Windows.Storage; //auðveldar Windows öppum að fara bara í known folders þannig að þú þurfir ekki að vera með eh gisk path
 using Microsoft.ProjectOxford.Common.Contract; //Þetta er fyrir APIið til að virka
 using Microsoft.ProjectOxford.Face;
+using Newtonsoft.Json;
 using Microsoft.ProjectOxford.Face.Contract;
 
 
@@ -155,11 +156,12 @@ namespace App1
 
             if (!punactive )
             {
-                if (possiblepuns.Count() > 0)
+                if (possiblepuns.Count() >= 1)
                 {
                     Random ran = new Random();
-                    int index = ran.Next(0, possiblepuns.Count());
+                    int index = ran.Next(0, possiblepuns.Count() -1);
                     pun = possiblepuns[index];
+                    possiblepuns.RemoveAt(index);
                     
                     tbl_pun.Text = pun.ToString();
                     //possiblepuns.RemoveAt(index);
@@ -210,13 +212,25 @@ namespace App1
 
         private void Disp_UpdateInfo(object sender, object e)
         {
-            Random rand = new Random();
-            int index = rand.Next(0, Infostrings.Count);
-            var count = Infostrings.Count();
-            if (Infostring != null)
+            if (grouptestFinished)
             {
-                tbl_Info.Text = Infostrings[index];
+                SnjokornFalla();
 
+            }
+            Random rand = new Random();
+            if (Infostrings.Count() >= 1)
+            {
+                int index = rand.Next(0, Infostrings.Count -1 );
+
+                if (Infostring != null)
+                {
+                    tbl_Info.Text = Infostrings[index];
+
+                }
+            }
+            else
+            {
+                tbl_Info.Text = "2 + 2 = 4";
             }
 
         }
@@ -445,6 +459,8 @@ namespace App1
                             //  tbl_status.Text = ("Result of face: " + identifyResult.FaceId);
                             if (identifyResult.Candidates.Length == 0)
                             {
+
+                                activeId = "I dont know you... but id like to ;)";
                                 /*
                                 Task nn = Task.Run(async () => { newname = await ReqName(); });
                                 nn.Wait();
@@ -544,8 +560,7 @@ namespace App1
                                             {
                                                 activeId = "Welcome Back " + check[0];
                                             }
-
-
+                                            activeId = greeting() + personname;
                                         }
                                         else
                                         {
@@ -574,7 +589,7 @@ namespace App1
             }
             catch (Exception e)
             {
-                activeId = "Main: " + activeId + " " + rounds;
+                activeId = "Nice weather we are having...";
                 grouptestFinished = true;
 
             }
@@ -608,7 +623,7 @@ namespace App1
             //hérna er snappað mynd og sett á staðinn
                 await mediaCapture.CapturePhotoToStorageFileAsync(imageProperties, photostorage);
              
-                using (Stream s = File.OpenRead(await GetPhoto()))
+                 using (Stream s = File.OpenRead(await GetPhoto()))
                 {
                     var faces = await faceServiceClient.DetectAsync(s);
                     face = faces;
@@ -627,7 +642,11 @@ namespace App1
                 Random nr = new Random();
 
                 many = true;
-                possiblepuns.Add(notalonepun[nr.Next(0, notalonepun.Count())]);
+                if(possiblepuns.Count >= 1)
+                {
+                    possiblepuns.Add(notalonepun[nr.Next(0, notalonepun.Count() - 1)]);
+                }
+                
                 }
                 else
                 {
@@ -635,6 +654,8 @@ namespace App1
                     // activeId = "Hello? is someone there?";
                 }
                 tries++;
+
+           
           
             
         }
@@ -733,6 +754,7 @@ namespace App1
                                     //  tbl_status.Text = ("Result of face: " + identifyResult.FaceId);
                                     if (identifyResult.Candidates.Length == 0)
                                     {
+                                    activeId = "I'm not allowed to talk to strangers";
                                     /*
                                     Task nn = Task.Run(async () => { newname = await ReqName(); });
                                     nn.Wait();
@@ -820,8 +842,8 @@ namespace App1
 
                                                 if (many)
                                                 {
-                                                    possibleStats.Add("It's good to see you have friends " + check[0]);
-                                                    possibleStats.Add("It's nice to see you are not alone " + check[0]);
+                                                    possibleStats.Add("It's good to see you have friends " + personname);
+                                                    possibleStats.Add("It's nice to see you are not alone " + personname);
                                                 }
                                                 if (check[2].ToString().ToLower() == "female")
                                                 {
@@ -833,14 +855,22 @@ namespace App1
                                                 }
                                                 if(check[4].ToString().ToLower() != "NOGLASSES")
                                                 {
-                                                    possibleStats.Add("Woah " + check[0].ToString() + " I like your glasses ");
+                                                    possibleStats.Add("Woah " + personname + " I like your glasses ");
                                                 }
                                                 if (Convert.ToDouble(check[6]) > 50)
                                                 {
-                                                    possibleStats.Add("You have a nice smile " + check[0]);
+                                                    possibleStats.Add("You have a nice smile " + personname);
                                                 }
-                                                Random r = new Random();
-                                                activeId = possibleStats[r.Next(0, possibleStats.Count)];
+
+                                                if(possibleStats.Count() >= 1)
+                                                {
+                                                    Random r = new Random();
+                                                    activeId = possibleStats[r.Next(0, possibleStats.Count - 1)];
+                                                }
+                                                else
+                                                {
+                                                    activeId = "How are you " + personname + "?";
+                                                }
                                                 }
                                             else if(personname == check[0].ToString())
                                             {
@@ -888,8 +918,16 @@ namespace App1
                
             catch (Exception e)
             {
-                activeId = "CheckFace= " + activeId;
-                //CheckFace();
+                if (possibleStats.Count() >= 1)
+                {
+                    Random rand = new Random();
+                    activeId = possibleStats[rand.Next(0, possibleStats.Count - 1)];
+                }
+                else
+                {
+                    activeId = "Like what you see?";
+                    //CheckFace();
+                }
                 rounds++;
             }
             
@@ -938,7 +976,9 @@ namespace App1
         {
             Infostrings.Clear();
             Infostrings.Add("You Can when you believe you can");
-            if(personsmile > 60)
+            Infostrings.Add("What does a mirror look at?");
+            Infostrings.Add("When I look in the mirror,\r\nI see me. \r\nWho do you see?");  
+            if (personsmile > 60)
             {
                 Infostrings.Add("What a Nice Smile");
             }
@@ -946,7 +986,7 @@ namespace App1
             {
                 Infostrings.Add("Hmm, you look like you are 26 years old.");
             }
-            if(hasglasses.ToString().ToLower() != "noglasses")
+            if(hasglasses.ToString().ToLower() == "readingglasses")
             {
                 Infostrings.Add("I like your " + hasglasses.ToString());
             }
@@ -954,7 +994,7 @@ namespace App1
             {
                 Infostrings.Add("Dont forget to smile to yourself.");
             }
-            if(mood.ToLower() == "happy")
+            if(mood.ToLower() == "happiness")
             {
                 Infostrings.Add("Wow your happiness is infecting");
             }
@@ -1052,7 +1092,7 @@ namespace App1
 
         public void SnjokornFalla()
         {
-            if (rounds % 4 == 0)
+            if (rounds > 3)
             {
                 
                 AnimateImage(() =>
@@ -1065,7 +1105,11 @@ namespace App1
                         Source = new BitmapImage(new Uri("ms-appx:///Assets/flake.png"))
                     };
                 }, 0.03, 0.12);
-                activeId = "I love Snow";
+                Infostrings.Add("I love Snow!");
+            }
+            else
+            {
+                Infostrings.Remove("I love Snow!");
             }
         }
 
